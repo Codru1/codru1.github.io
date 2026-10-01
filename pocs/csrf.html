@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CSRF write-up · Codru</title>
+  <meta name="description" content="Proof-of-concept notes for CVE-2026-3464 affecting WP Customer Area.">
+  <title>CVE-2026-3464 PoC · Codru</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -17,27 +18,65 @@
       </div>
     </div>
   </nav>
+
   <main class="container py-5">
     <div class="row justify-content-center">
       <article class="col-lg-8">
-        <h1 class="mb-3">CSRF: missing request integrity controls</h1>
-        <p class="lead">A concise, sanitized overview of a common cross-site request forgery pattern.</p>
-        <h2 class="h4 mt-4">What to look for</h2>
-        <p>A state-changing request may be vulnerable when the server relies only on the user's authenticated session and does not verify that the request originated from the intended application flow.</p>
-        <h2 class="h4 mt-4">Impact</h2>
-        <p>An attacker may be able to cause an authenticated browser to submit an unintended action on a vulnerable application.</p>
-        <h2 class="h4 mt-4">Mitigations</h2>
-        <ul>
-          <li>Use anti-CSRF tokens for state-changing requests.</li>
-          <li>Use appropriate SameSite cookie settings.</li>
-          <li>Validate Origin or Referer headers where appropriate.</li>
-          <li>Require re-authentication or explicit confirmation for sensitive actions.</li>
-        </ul>
-        <div class="alert alert-secondary mt-4" role="alert">This page intentionally omits deployable exploit code, live targets, and account-specific data.</div>
+        <p class="text-body-secondary mb-2">WordPress · CVE research</p>
+        <h1 class="mb-3">CVE-2026-3464: WP Customer Area arbitrary file read</h1>
+        <p class="lead">
+          A proof-of-concept write-up for CVE-2026-3464 affecting WP Customer Area. I did not discover the original vulnerability; this page documents the publicly known issue and an independent PoC I wrote to reproduce the file-read behavior in an authorized lab.
+        </p>
+
+        <div class="alert alert-warning my-4" role="alert">
+          Use only on systems you own or are explicitly authorized to test. This page explains the vulnerability and PoC design without publishing deployable exploit code.
+        </div>
+
+        <h2 class="h4 mt-4">Public vulnerability summary</h2>
+        <dl class="row">
+          <dt class="col-sm-4">CVE</dt><dd class="col-sm-8">CVE-2026-3464</dd>
+          <dt class="col-sm-4">Product</dt><dd class="col-sm-8">WP Customer Area</dd>
+          <dt class="col-sm-4">Affected versions</dt><dd class="col-sm-8">Up to and including 8.3.4</dd>
+          <dt class="col-sm-4">Class</dt><dd class="col-sm-8">Path traversal leading to authenticated arbitrary file read / deletion</dd>
+          <dt class="col-sm-4">Weakness</dt><dd class="col-sm-8">CWE-22</dd>
+        </dl>
+
+        <h2 class="h4 mt-4">How it works</h2>
+        <p>
+          The vulnerable plugin flow handles files attached to Customer Area private-file posts. In affected versions, user-controlled path information is not constrained tightly enough to the intended directory. That allows a crafted path to resolve outside the expected storage location.
+        </p>
+        <p>
+          For the read case, the affected attachment workflow can cause a server-side file to be treated as a normal private-file attachment. Once that happens, the file becomes retrievable through the plugin's ordinary authenticated download mechanism. Public advisories also describe a related arbitrary-file-deletion impact stemming from the same path-validation weakness.
+        </p>
+
+        <h2 class="h4 mt-4">My PoC</h2>
+        <p>
+          My Python PoC is deliberately single-target and requires an explicit authorization flag. It authenticates to WordPress, finds or uses a private-file post, obtains the nonce required by the attachment flow, submits a traversal-style filename through the affected handler, and then retrieves the resulting attachment through the normal download path.
+        </p>
+        <p>
+          The script includes a few guardrails: it stays on the chosen origin, rejects cross-origin redirects, does not embed credentials in the target URL, and does not implement the deletion primitive. The PoC is focused only on demonstrating the file-read behavior.
+        </p>
+
+        <h2 class="h4 mt-4">Why it matters</h2>
+        <p>
+          Arbitrary file read can expose sensitive files that are readable by the web application process, including configuration material, secrets, or application data. The related deletion primitive increases the integrity and availability impact.
+        </p>
+
+        <h2 class="h4 mt-4">Remediation</h2>
+        <p>
+          Administrators should update WP Customer Area to a version containing the vendor's fix and review any exposed file-handling paths. Path resolution should be constrained to intended directories before file operations are performed.
+        </p>
+
+        <h2 class="h4 mt-4">About the PoC source</h2>
+        <p>
+          The PoC I wrote targets WP Customer Area 8.3.4 and implements only the arbitrary-file-read path. The source includes an authorization check and does not include the related deletion primitive.
+        </p>
+
         <a href="/pocs/" class="btn btn-outline-secondary mt-2">Back to PoCs</a>
       </article>
     </div>
   </main>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
